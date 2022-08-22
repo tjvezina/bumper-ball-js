@@ -1,25 +1,22 @@
+import ScreenManager from './framework/screen-manager.js';
+import Ball from './game/ball.js';
+import Paddle from './game/paddle.js';
+import Peg from './game/peg.js';
+import LoadingScreen from './screens/loading-screen.js';
+import MainMenuScreen from './screens/main-menu-screen.js';
 export const VIEW_WIDTH = 1024;
 export const VIEW_HEIGHT = 768;
-let viewScale = 1;
+export let viewScale = 1;
 let font;
-let imgChromeBall;
-let imgBackground;
-let imgLoading;
-let imgTitle;
-let imgPaddle;
-let imgPeg;
-let imgPegCracked1;
-let imgPegCracked2;
+export let imgBackground;
 globalThis.preload = function () {
     loadFont('./assets/pericles-regular.ttf', result => { font = result; });
-    loadImage('./assets/chrome-ball.png', result => { imgChromeBall = result; });
     loadImage('./assets/dark.png', result => { imgBackground = result; });
-    loadImage('./assets/loading.png', result => { imgLoading = result; });
-    loadImage('./assets/menu-title.png', result => { imgTitle = result; });
-    loadImage('./assets/paddle.png', result => { imgPaddle = result; });
-    loadImage('./assets/peg.png', result => { imgPeg = result; });
-    loadImage('./assets/peg-cracked-1.png', result => { imgPegCracked1 = result; });
-    loadImage('./assets/peg-cracked-2.png', result => { imgPegCracked2 = result; });
+    MainMenuScreen.preload();
+    LoadingScreen.preload();
+    Ball.preload();
+    Paddle.preload();
+    Peg.preload();
 };
 globalThis.windowResized = function () {
     viewScale = (windowWidth / windowHeight < VIEW_WIDTH / VIEW_HEIGHT ? windowWidth / VIEW_WIDTH : windowHeight / VIEW_HEIGHT);
@@ -29,9 +26,16 @@ globalThis.setup = function () {
     viewScale = (windowWidth / windowHeight < VIEW_WIDTH / VIEW_HEIGHT ? windowWidth / VIEW_WIDTH : windowHeight / VIEW_HEIGHT);
     createCanvas(VIEW_WIDTH * viewScale, VIEW_HEIGHT * viewScale);
     pixelDensity(1);
+    noCursor();
+    textSize(28.5);
+    textAlign(LEFT, TOP);
+    textFont(font);
+    ScreenManager.addScreen(new MainMenuScreen());
 };
 globalThis.draw = function () {
-    background(42);
+    background(0);
     scale(viewScale);
+    ScreenManager.update(document.hasFocus());
+    ScreenManager.draw();
 };
 //# sourceMappingURL=sketch.js.map

@@ -1,6 +1,6 @@
 import { VIEW_WIDTH } from '../sketch.js';
 import Actor from './actor.js';
-export const BALL_RADIUS = 24;
+export const BALL_RADIUS = 12;
 const MAX_BALL_SPEED = 1000;
 export default class Ball extends Actor {
     constructor() {

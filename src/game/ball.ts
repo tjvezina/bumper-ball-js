@@ -14,11 +14,11 @@ export default class Ball extends Actor {
   vel = createVector(0, 0);
 
   update(): void {
-    // TODO: Remove explicit casts when type definitions are fixed
-    this.pos.add(p5.Vector.mult(this.vel, deltaTime/1000) as unknown as p5.Vector);
-
     this.vel.y += 10;
     this.vel.limit(MAX_BALL_SPEED);
+
+    // TODO: Remove explicit casts when type definitions are fixed
+    this.pos.add(p5.Vector.mult(this.vel, deltaTime/1000) as unknown as p5.Vector);
 
     if (this.pos.y - BALL_RADIUS < 0) {
       this.pos.y = BALL_RADIUS;

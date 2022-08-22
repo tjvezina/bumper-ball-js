@@ -16,7 +16,7 @@ export default class DifficultyScreen extends Screen {
     if (!this.isActive) return;
 
     if (keyCode === ENTER) {
-      LoadingScreen.load(new GameScreen(this.selectedEntry));
+      LoadingScreen.load(new GameScreen(this.selectedEntry), true);
     }
 
     if (keyCode === UP_ARROW) {

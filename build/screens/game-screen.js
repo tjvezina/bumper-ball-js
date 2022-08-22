@@ -45,7 +45,7 @@ export default class GameScreen extends Screen {
         this.multiplier = 0;
         this.actors.length = 0;
         this.ball = new Ball(VIEW_WIDTH / 2, VERTICAL_SPACER / 2);
-        this.paddle = new Paddle(0, VIEW_HEIGHT - 32);
+        this.paddle = new Paddle((VIEW_WIDTH - PADDLE_WIDTH) / 2, VIEW_HEIGHT - 32);
         this.actors.push(this.ball, this.paddle);
         const hPad = (VIEW_WIDTH - (PEG_RADIUS * 2 * this.pegColumns)) / (this.pegColumns + 1);
         let pegX = -PEG_RADIUS;

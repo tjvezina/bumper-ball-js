@@ -24,9 +24,14 @@ const listenerMap = new Map<InputEventType, InputEventListener[]>();
 // If a global definition for an event existed before InputManager, keep a reference for restoring
 const prevEventFuncMap = new Map<InputEventType, InputEventCallback>();
 
+let pointerLockIsRequired = false;
+let lastPointerLockChangeTime = -Infinity;
+
 const InputManager = {
   get mousePos(): { x: number, y: number } { return { x: mouseX / viewScale, y: mouseY / viewScale }; },
   get mouseDelta(): { x: number, y: number } { return { x: movedX / viewScale, y: movedY / viewScale }; },
+
+  get hasPointerLock(): boolean { return document.pointerLockElement !== null; },
 
   addListener(listener: InputEventListener): void {
     if (listenerSet.has(listener)) {
@@ -60,13 +65,29 @@ const InputManager = {
     }
   },
 
-  dispatch(eventType: InputEventType, event?: Event): void {
-    listenerMap.get(eventType).forEach(listener => (listener[eventType] as InputEventCallback).apply(listener, event));
+  requirePointerLock(): void {
+    pointerLockIsRequired = true;
+
+    document.addEventListener('pointerlockchange', () => {
+      lastPointerLockChangeTime = millis();
+    });
+
+    document.addEventListener('mousedown', () => {
+      if (!InputManager.hasPointerLock && millis() - lastPointerLockChangeTime > 1500) {
+        requestPointerLock();
+      }
+    });
   },
 };
 
+function tryDispatchEvent(eventType: InputEventType, event?: Event): void {
+  if (pointerLockIsRequired && !InputManager.hasPointerLock) return;
+
+  listenerMap.get(eventType).forEach(listener => (listener[eventType] as InputEventCallback).apply(listener, event));
+}
+
 function wrapEvent(eventType: InputEventType): void {
-  const eventFunc = function (event?: Event): void { InputManager.dispatch(eventType, event); };
+  const eventFunc = function (event?: Event): void { tryDispatchEvent(eventType, event); };
   const prevEventFunc: InputEventCallback = globalThis[eventType];
 
   if (prevEventFunc === undefined) {

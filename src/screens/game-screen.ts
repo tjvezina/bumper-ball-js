@@ -63,7 +63,7 @@ export default class GameScreen extends Screen {
     this.actors.length = 0;
 
     this.ball = new Ball(VIEW_WIDTH/2, VERTICAL_SPACER/2);
-    this.paddle = new Paddle(0, VIEW_HEIGHT - 32);
+    this.paddle = new Paddle((VIEW_WIDTH - PADDLE_WIDTH)/2, VIEW_HEIGHT - 32);
 
     this.actors.push(this.ball, this.paddle);
 

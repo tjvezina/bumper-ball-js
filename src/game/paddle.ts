@@ -31,7 +31,7 @@ export default class Paddle extends Actor {
   update(): void {
     const { pos, normalPosY } = this;
 
-    pos.x = InputManager.mousePos.x - PADDLE_WIDTH/2;
+    pos.x += InputManager.mouseDelta.x;
 
     if (pos.y < normalPosY) {
       pos.y += 2;

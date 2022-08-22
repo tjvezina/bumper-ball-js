@@ -14,9 +14,12 @@ const INPUT_EVENT_TYPES = [
 const listenerSet = new Set();
 const listenerMap = new Map();
 const prevEventFuncMap = new Map();
+let pointerLockIsRequired = false;
+let lastPointerLockChangeTime = -Infinity;
 const InputManager = {
     get mousePos() { return { x: mouseX / viewScale, y: mouseY / viewScale }; },
     get mouseDelta() { return { x: movedX / viewScale, y: movedY / viewScale }; },
+    get hasPointerLock() { return document.pointerLockElement !== null; },
     addListener(listener) {
         if (listenerSet.has(listener)) {
             return;
@@ -45,12 +48,25 @@ const InputManager = {
             }
         }
     },
-    dispatch(eventType, event) {
-        listenerMap.get(eventType).forEach(listener => listener[eventType].apply(listener, event));
+    requirePointerLock() {
+        pointerLockIsRequired = true;
+        document.addEventListener('pointerlockchange', () => {
+            lastPointerLockChangeTime = millis();
+        });
+        document.addEventListener('mousedown', () => {
+            if (!InputManager.hasPointerLock && millis() - lastPointerLockChangeTime > 1500) {
+                requestPointerLock();
+            }
+        });
     },
 };
+function tryDispatchEvent(eventType, event) {
+    if (pointerLockIsRequired && !InputManager.hasPointerLock)
+        return;
+    listenerMap.get(eventType).forEach(listener => listener[eventType].apply(listener, event));
+}
 function wrapEvent(eventType) {
-    const eventFunc = function (event) { InputManager.dispatch(eventType, event); };
+    const eventFunc = function (event) { tryDispatchEvent(eventType, event); };
     const prevEventFunc = globalThis[eventType];
     if (prevEventFunc === undefined) {
         globalThis[eventType] = eventFunc;

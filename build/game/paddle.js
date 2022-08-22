@@ -19,7 +19,7 @@ export default class Paddle extends Actor {
     get isBouncing() { return this.pos.y !== this.normalPosY; }
     update() {
         const { pos, normalPosY } = this;
-        pos.x = InputManager.mousePos.x - PADDLE_WIDTH / 2;
+        pos.x += InputManager.mouseDelta.x;
         if (pos.y < normalPosY) {
             pos.y += 2;
             if (pos.y > normalPosY) {

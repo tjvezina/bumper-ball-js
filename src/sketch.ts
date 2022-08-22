@@ -1,3 +1,4 @@
+import InputManager from './framework/input-manager.js';
 import ScreenManager from './framework/screen-manager.js';
 import Ball from './game/ball.js';
 import Paddle from './game/paddle.js';
@@ -34,12 +35,12 @@ globalThis.setup = function (): void {
   viewScale = (windowWidth/windowHeight < VIEW_WIDTH/VIEW_HEIGHT ? windowWidth/VIEW_WIDTH : windowHeight/VIEW_HEIGHT);
   createCanvas(VIEW_WIDTH * viewScale, VIEW_HEIGHT * viewScale);
   pixelDensity(1);
-  noCursor();
 
   textSize(28.5);
   textAlign(LEFT, TOP);
   textFont(font);
 
+  InputManager.requirePointerLock();
   ScreenManager.addScreen(new MainMenuScreen());
 };
 
@@ -47,6 +48,6 @@ globalThis.draw = function (): void {
   background(0);
   scale(viewScale);
 
-  ScreenManager.update(document.hasFocus());
+  ScreenManager.update(document.hasFocus() && InputManager.hasPointerLock);
   ScreenManager.draw();
 };
